@@ -1,13 +1,17 @@
 package com.igorborba.ecommerce.entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 
 @Entity
 public class Product implements Serializable {
@@ -19,25 +23,26 @@ public class Product implements Serializable {
 	private String name;
 	private Double price;
 	
-	@ManyToOne
-	private Category category;
+	@ManyToMany							  // JoinTable: cria tabela intermediário quano tem relacionamento muitos para muitos
+	@JoinTable(name = "PRODUCT_CATEGORY", // name: nome da tabela
+			   joinColumns = @JoinColumn(name = "PRODUCT_ID"), // chave estrangeira desta classe
+			   inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID")) // chave estrangeira da outra classe
+	private List<Category> category = new ArrayList<>();
 
 	public Product() {}
 	
-	public Product(Integer id, String name, Double price, Category category) {
+	public Product(Integer id, String name, Double price) {
 		this.id = id;
 		this.name = name;
 		this.price = price;
-		
-		this.category = category;
 	}
 	
-	public Category getCategory() {
+	public List<Category> getCategory() {
 		return category;
 	}
 
-	public void setCategory(Category category) {
-		this.category = category;
+	public void addCategory(Category category) {
+		this.category.add(category);
 	}
 	
 	
